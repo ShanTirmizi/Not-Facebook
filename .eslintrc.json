@@ -1,6 +1,14 @@
 {
-  "extends": ["next","next/core-web-vitals", "eslint:recommended", "plugin:react/recommended"],
+  "extends": [
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
   "globals": {
     "React": "readonly"
+  },
+  "rules": {
+    "no-console": "error"
   }
 }
