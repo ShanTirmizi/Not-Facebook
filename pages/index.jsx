@@ -1,22 +1,32 @@
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 
+// import session form next auth
 const Home = () => {
+  const { data: session, status } = useSession();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Create a new bio from the form data
-    e.preventDefault();
+    console.log(e.target.user.value, status);
     const bio = {
       bio: e.currentTarget.bio.value,
     };
+    const email = {
+      email: e.target.user.value,
+    };
+    console.log(email);
+
     // Send the bio to the API
-    const res = await fetch('/api/post', {
+    await fetch('/api/post', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(bio),
+      // send the bio and the email as a JSON string
+      body: JSON.stringify({ bio, email }),
     });
     // Redirect to the bio page
 
@@ -42,10 +52,18 @@ const Home = () => {
 
       <main className={styles.main}>
         {/* Create a form that submits to prisma  */}
-        <form onSubmit={handleSubmit}>
-          <input type="bio" name="bio" placeholder="Please enter your bio" />
-          <button type="submit">Submit</button>
-        </form>
+        {status === 'authenticated' && (
+          <form onSubmit={handleSubmit}>
+            <input type="bio" name="bio" placeholder="Please enter your bio" />
+            <input
+              type="email"
+              name="user"
+              value={session?.user?.email}
+              disabled
+            />
+            <button type="submit">Submit</button>
+          </form>
+        )}
       </main>
 
       <footer className={styles.footer}>
@@ -66,13 +84,13 @@ const Home = () => {
 
 export default Home;
 
-export async function getStaticProps() {
-  const res = await fetch('http://localhost:3000/api/post');
-  const data = await res.json();
+// export async function getStaticProps() {
+//   const res = await fetch('http://localhost:3000/api/post');
+//   const data = await res.json();
 
-  return {
-    props: {
-      data,
-    },
-  };
-}
+//   return {
+//     props: {
+//       data,
+//     },
+//   };
+// }
