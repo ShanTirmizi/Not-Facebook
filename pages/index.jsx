@@ -2,6 +2,7 @@ import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import Post from '../components/post';
 import prisma from '../lib/prisma';
 import styles from '../styles/Home.module.css';
 
@@ -32,7 +33,7 @@ const Home = ({ profile }) => {
 
     // Send the bio to the API
 
-    await fetch('/api/post', {
+    await fetch('/api/profile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,6 +77,8 @@ const Home = ({ profile }) => {
 
       <main className={styles.main}>
         {profile.map((bio) => {
+          //  get the user object from bio
+
           return (
             <div key={bio.id}>
               <h1>{bio.bio}</h1>
@@ -104,6 +107,8 @@ const Home = ({ profile }) => {
             </Link>
           </div>
         )}
+        <h1>Post</h1>
+        <Post />
       </main>
 
       <footer className={styles.footer}>
