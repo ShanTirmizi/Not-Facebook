@@ -1,13 +1,4 @@
 import { useSession } from 'next-auth/react';
-// import prisma from '../lib/prisma';
-
-// export async function getServerSideProps() {
-//   const posts = await prisma.post.findMany();
-
-//   return {
-//     props: { posts },
-//   };
-// }
 
 const Post = () => {
   const { data: session } = useSession();

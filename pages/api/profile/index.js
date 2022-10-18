@@ -6,12 +6,6 @@ import prisma from '../../../lib/prisma';
 export default async function handler(req, res) {
   const { bio, email } = req.body;
 
-  // const user = await prisma.user.findUnique({
-  //   where: {
-  //     email: email.email,
-  //   },
-  // });
-
   if (req.method === 'POST') {
     const profile = await prisma.profile.create({
       data: {
