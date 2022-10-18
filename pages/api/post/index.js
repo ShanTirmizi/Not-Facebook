@@ -9,8 +9,6 @@ const prisma = new PrismaClient();
 export default async function handler(req, res) {
   const { bio, email } = req.body;
 
-  // const session = await unstable_getServerSession(req, res, authOptions);
-  console.log('req.body', typeof email.email);
   const user = await prisma.user.findUnique({
     where: {
       email: email.email,
@@ -18,15 +16,11 @@ export default async function handler(req, res) {
   });
 
   if (req.method === 'POST') {
-    const profileExists = await prisma.profile.findUnique({
-      where: {
-        userId: user.id,
-      },
-    });
     const profile = await prisma.profile.create({
       data: {
         bio: bio.bio,
         userId: user?.id,
+        userName: bio.userName,
       },
     });
 

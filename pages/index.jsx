@@ -1,25 +1,37 @@
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
+import prisma from '../lib/prisma';
 import styles from '../styles/Home.module.css';
 
+export async function getServerSideProps() {
+  const profile = await prisma.profile.findMany();
+  // get the user from the userId
+  // get users from based on the userId
+
+  return {
+    props: { profile },
+  };
+}
+
 // import session form next auth
-const Home = () => {
+const Home = ({ profile }) => {
   const { data: session, status } = useSession();
+  // console.log(profile, users);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Create a new bio from the form data
-    console.log(e.target.user.value, status);
     const bio = {
       bio: e.currentTarget.bio.value,
     };
     const email = {
       email: e.target.user.value,
     };
-    console.log(email);
 
     // Send the bio to the API
+
     await fetch('/api/post', {
       method: 'POST',
       headers: {
@@ -42,6 +54,18 @@ const Home = () => {
     //   body: JSON.stringify({ bio }),
     // });
   };
+  const bioFrom = (
+    <>
+      <form onSubmit={handleSubmit}>
+        <input type="bio" name="bio" placeholder="Please enter your bio" />
+        <input type="email" name="user" value={session?.user?.email} disabled />
+        <button type="submit">Submit</button>
+      </form>
+      <Link href="/api/auth/signout">
+        <h1>Sign out</h1>
+      </Link>
+    </>
+  );
   return (
     <div className={styles.container}>
       <Head>
@@ -51,18 +75,34 @@ const Home = () => {
       </Head>
 
       <main className={styles.main}>
+        {profile.map((bio) => {
+          return (
+            <div key={bio.id}>
+              <h1>{bio.bio}</h1>
+              <h1>{bio.email}</h1>
+              <h1>{bio.userName}</h1>
+            </div>
+          );
+        })}
         {/* Create a form that submits to prisma  */}
-        {status === 'authenticated' && (
-          <form onSubmit={handleSubmit}>
-            <input type="bio" name="bio" placeholder="Please enter your bio" />
-            <input
-              type="email"
-              name="user"
-              value={session?.user?.email}
-              disabled
-            />
-            <button type="submit">Submit</button>
-          </form>
+        {status === 'authenticated' ? (
+          // <form onSubmit={handleSubmit}>
+          //   <input type="bio" name="bio" placeholder="Please enter your bio" />
+          //   <input
+          //     type="email"
+          //     name="user"
+          //     value={session?.user?.email}
+          //     disabled
+          //   />
+          //   <button type="submit">Submit</button>
+          // </form>
+          bioFrom
+        ) : (
+          <div>
+            <Link href="/api/auth/signin">
+              <h1>Please sign in</h1>
+            </Link>
+          </div>
         )}
       </main>
 
@@ -94,3 +134,5 @@ export default Home;
 //     },
 //   };
 // }
+
+// Get the profile data from the API from prisma
