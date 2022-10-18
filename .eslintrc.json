@@ -9,6 +9,7 @@
     "React": "readonly"
   },
   "rules": {
-    "no-console": "error"
+    "no-console": "error",
+    "react/prop-types": "off"
   }
 }
