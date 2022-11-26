@@ -14,6 +14,7 @@ export default async function handler(req, res) {
         },
         userName: bio.userName,
       },
+      image: bio.image,
     });
 
     res.status(201).json({ profile });

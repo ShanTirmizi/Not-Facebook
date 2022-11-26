@@ -62,6 +62,7 @@ model Post {
   published Boolean  @default(false)
   authorId  String
   User      User     @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "post_ibfk_1")
+  image     String?
 
   @@index([authorId], map: "authorId")
 }
