@@ -31,7 +31,6 @@ export async function getServerSideProps() {
 // import session form next auth
 const Home = (props) => {
   const { profile, posts } = props;
-  console.log(props);
   const { data: session, status } = useSession();
 
   const handleSubmit = async (e) => {

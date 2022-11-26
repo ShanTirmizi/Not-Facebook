@@ -19,7 +19,6 @@ import { useState } from 'react';
 // }
 
 const Post = ({ posts }) => {
-  console.log(posts);
   // console.log(profile);
   const [imageData, setImageData] = useState(null);
   const { data: session } = useSession();
