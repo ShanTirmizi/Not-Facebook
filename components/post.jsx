@@ -1,5 +1,6 @@
 // import { prisma } from '@prisma/client';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import { useState } from 'react';
 // import prisma from '../lib/prisma';
 
@@ -17,7 +18,8 @@ import { useState } from 'react';
 //   };
 // }
 
-const Post = () => {
+const Post = ({ posts }) => {
+  console.log(posts);
   // console.log(profile);
   const [imageData, setImageData] = useState(null);
   const { data: session } = useSession();
@@ -69,6 +71,24 @@ const Post = () => {
         />
         <button type="submit">Submit</button>
       </form>
+      <div>
+        <h1>List of all the posts</h1>
+
+        {posts.map((post) => (
+          <div key={post.id}>
+            <h1>{post.title}</h1>
+            <p>{post.content}</p>
+            <Image
+              src={post.image}
+              // fix the loader issue from console
+              loader={({ src }) => src}
+              width={200}
+              height={200}
+              alt={post.title}
+            />
+          </div>
+        ))}
+      </div>
     </>
   );
 };

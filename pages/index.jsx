@@ -8,14 +8,30 @@ import styles from '../styles/Home.module.css';
 
 export async function getServerSideProps() {
   const profile = await prisma.profile.findMany();
+  const posts = await prisma.post.findMany({
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      image: true,
+      User: {
+        select: {
+          email: true,
+          id: true,
+        },
+      },
+    },
+  });
 
   return {
-    props: { profile },
+    props: { profile, posts },
   };
 }
 
 // import session form next auth
-const Home = ({ profile }) => {
+const Home = (props) => {
+  const { profile, posts } = props;
+  console.log(props);
   const { data: session, status } = useSession();
 
   const handleSubmit = async (e) => {
@@ -75,7 +91,7 @@ const Home = ({ profile }) => {
           </div>
         )}
         <h1>Post</h1>
-        <Post />
+        <Post posts={posts} />
       </main>
 
       <footer className={styles.footer}>
