@@ -3,19 +3,33 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import Post from '../components/post';
-import prisma from '../lib/prisma';
+import { prisma } from '../lib/prisma';
 import styles from '../styles/Home.module.css';
 
 export async function getServerSideProps() {
   const profile = await prisma.profile.findMany();
+  const post = await prisma.post.findMany({
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      image: true,
+      User: {
+        select: {
+          email: true,
+          id: true,
+        },
+      },
+    },
+  });
 
   return {
-    props: { profile },
+    props: { profile, post },
   };
 }
 
 // import session form next auth
-const Home = ({ profile }) => {
+const Home = ({ profile, post }) => {
   const { data: session, status } = useSession();
 
   const handleSubmit = async (e) => {
@@ -75,7 +89,7 @@ const Home = ({ profile }) => {
           </div>
         )}
         <h1>Post</h1>
-        <Post />
+        <Post post={post} />
       </main>
 
       <footer className={styles.footer}>
