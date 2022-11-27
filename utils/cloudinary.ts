@@ -1,3 +1,5 @@
+import { NextApiResponse } from 'next';
+
 /* eslint-disable no-undef */
 const cloudinary = require('cloudinary').v2;
 // import { v2 as cloudinary } from 'cloudinary';
@@ -8,12 +10,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export function uploadImage(imageUploaded) {
+export function uploadImage(imageUploaded: any) {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       imageUploaded,
       { width: 400, height: 300, crop: 'fill' },
-      (err, res) => {
+      (err: any, res: NextApiResponse) => {
         if (err) reject(err);
         resolve(res);
       }
@@ -21,4 +23,5 @@ export function uploadImage(imageUploaded) {
   });
 }
 
-module.exports = cloudinary;
+// module.exports = cloudinary;
+export default cloudinary;
