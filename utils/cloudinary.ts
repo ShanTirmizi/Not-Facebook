@@ -23,5 +23,14 @@ export function uploadImage(imageUploaded: any) {
   });
 }
 
+export function deleteImage(image: any) {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.destroy(image, (err: any, res: NextApiResponse) => {
+      if (err) reject(err);
+      resolve(res);
+    });
+  });
+}
+
 // module.exports = cloudinary;
 export default cloudinary;

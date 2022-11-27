@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { FC, useEffect, useState } from 'react';
 import { IPost } from '../pages/index';
 
-interface IImageData {
+export interface IImageData {
   access_mode: string;
   asset_id: string;
   bytesL: number;
@@ -40,6 +40,17 @@ const Post: FC<IPostProps> = ({ posts }) => {
   const refreshData = () => {
     router.replace(router.asPath);
   };
+  const handleDelete = async (id: number) => {
+    await fetch(`/api/post/${id}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ id }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    refreshData();
+  };
+
   // handle image upload
   const handleImageUpload = async (e: any) => {
     setIsImageUploading(true);
@@ -112,6 +123,7 @@ const Post: FC<IPostProps> = ({ posts }) => {
               height={200}
               alt={post.title}
             />
+            <button onClick={() => handleDelete(post.id)}>Delete</button>
           </div>
         ))}
       </div>
