@@ -2,45 +2,55 @@ import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { FC } from 'react';
 import Post from '../components/post';
-import prisma from '../lib/prisma';
+import { prisma } from '../lib/prisma';
 import styles from '../styles/Home.module.css';
 
-export async function getServerSideProps() {
-  const profile = await prisma.profile.findMany();
-  const posts = await prisma.post.findMany({
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      image: true,
-      User: {
-        select: {
-          email: true,
-          id: true,
-        },
-      },
-    },
-  });
-
-  return {
-    props: { profile, posts },
-  };
+interface IProfile {
+  profile: {
+    id: number;
+    name: string;
+    email: string;
+    image: string;
+    bio: string;
+    userName: string;
+  }[];
 }
 
+export interface IPost {
+  posts: {
+    id: number;
+    title: string;
+    content: string;
+    image: string;
+    User: {
+      email: string;
+      id: number;
+      userName: string;
+    };
+  }[];
+}
 // import session form next auth
-const Home = (props) => {
+interface IHome extends IProfile, IPost {}
+
+const Home: FC<IHome> = (props) => {
   const { profile, posts } = props;
   const { data: session, status } = useSession();
 
-  const handleSubmit = async (e) => {
+  const router = useRouter();
+
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
+
+  const handleSubmit = async (e: any) => {
+    // Fix the type check of e
     e.preventDefault();
-    const bio = {
-      bio: e.currentTarget.bio.value,
-    };
-    const email = {
-      email: e.target.user.value,
-    };
+    const bio = e.currentTarget.bio.value;
+
+    const email = e.target.user.value;
 
     await fetch('/api/profile', {
       method: 'POST',
@@ -49,12 +59,19 @@ const Home = (props) => {
       },
       body: JSON.stringify({ bio, email }),
     });
+    refreshData();
   };
   const bioFrom = (
     <>
       <form onSubmit={handleSubmit}>
         <input type="bio" name="bio" placeholder="Please enter your bio" />
-        <input type="email" name="user" value={session?.user?.email} disabled />
+        <input
+          type="email"
+          name="user"
+          // Remove this exclamtion mark in the future
+          value={session?.user?.email!}
+          disabled
+        />
         <button type="submit">Submit</button>
       </form>
       <Link href="/api/auth/signout">
@@ -110,3 +127,25 @@ const Home = (props) => {
 };
 
 export default Home;
+
+export async function getServerSideProps() {
+  const profile = await prisma.profile.findMany();
+  const posts = await prisma.post.findMany({
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      image: true,
+      User: {
+        select: {
+          email: true,
+          id: true,
+        },
+      },
+    },
+  });
+
+  return {
+    props: { profile, posts },
+  };
+}

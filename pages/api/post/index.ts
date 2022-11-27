@@ -1,6 +1,11 @@
-import prisma from '../../../lib/prisma';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { prisma } from '../../../lib/prisma';
 import cloudinary from '../../../utils/cloudinary';
-export default async function handle(req, res) {
+
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { title, content, email, image } = req.body;
   const getImage = await cloudinary.uploader.upload(image, {
     foler: 'posts',
