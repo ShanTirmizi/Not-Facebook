@@ -38,6 +38,7 @@ interface IHome extends IUser, IPost {}
 const Home: FC<IHome> = (props) => {
   const { user, posts } = props;
   const { data: session, status } = useSession();
+  // console.log(session);
 
   const router = useRouter();
 
@@ -62,6 +63,19 @@ const Home: FC<IHome> = (props) => {
       body: JSON.stringify({ bio, email, userName }),
     });
     refreshData();
+  };
+
+  const handleFollow = async (e: any, bio: any) => {
+    e.preventDefault();
+    const email = session?.user?.email;
+    const followingUser = bio.id;
+    await fetch('/api/follow', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, followingUser }),
+    });
   };
   const bioFrom = (
     <>
@@ -98,11 +112,21 @@ const Home: FC<IHome> = (props) => {
       <main className={styles.main}>
         {user.map((bio: any) => {
           return (
-            <div key={bio.id}>
+            <form onSubmit={(e: any) => handleFollow(e, bio)} key={bio.id}>
               <h1>{bio.bio}</h1>
               <h1>{bio.email}</h1>
               <h1>{bio.userName}</h1>
-            </div>
+              {/* Show the follow button for all users but the one that is currently logged in  */}
+              {session?.user?.email !== bio.email && (
+                // if the user is already follwing the user, show the unfollow button
+                <button
+                  type="submit"
+                  // onClick={(e: any) => handleFollow(e, bio)}
+                >
+                  Follow
+                </button>
+              )}
+            </form>
           );
         })}
         {status === 'authenticated' ? (
