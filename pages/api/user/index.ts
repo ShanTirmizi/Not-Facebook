@@ -3,13 +3,11 @@ import { prisma } from '../../../lib/prisma';
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
-    bio: {
-      image: never;
-      // image: string;
-      userName: string;
-      bio: string;
-    };
+    user: any;
+    bio: string;
+    id: string;
     email: string;
+    userName: string;
   };
 }
 
@@ -17,23 +15,20 @@ export default async function handler(
   req: ExtendedNextApiRequest,
   res: NextApiResponse
 ) {
-  const { bio, email } = req.body;
+  const { bio, email, userName } = req.body;
 
   if (req.method === 'POST') {
-    const profile = await prisma.profile.create({
+    const user = await prisma.user.update({
       data: {
-        bio: bio.bio,
-        User: {
-          connect: {
-            email: email,
-          },
-        },
-        userName: bio.userName,
+        bio: bio,
+        userName: userName,
       },
-      image: bio.image,
+      where: {
+        email: email,
+      },
     });
 
-    res.status(201).json({ profile });
+    res.status(201).json({ user });
     res.status(200).json({ name: 'John Doe' });
   }
 }

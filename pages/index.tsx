@@ -8,9 +8,9 @@ import Post from '../components/post';
 import { prisma } from '../lib/prisma';
 import styles from '../styles/Home.module.css';
 
-interface IProfile {
-  profile: {
-    id: number;
+interface IUser {
+  user: {
+    id: string;
     name: string;
     email: string;
     image: string;
@@ -33,10 +33,10 @@ export interface IPost {
   }[];
 }
 // import session form next auth
-interface IHome extends IProfile, IPost {}
+interface IHome extends IUser, IPost {}
 
 const Home: FC<IHome> = (props) => {
-  const { profile, posts } = props;
+  const { user, posts } = props;
   const { data: session, status } = useSession();
 
   const router = useRouter();
@@ -50,20 +50,28 @@ const Home: FC<IHome> = (props) => {
     e.preventDefault();
     const bio = e.currentTarget.bio.value;
 
-    const email = e.target.user.value;
+    const email = e.currentTarget.user.value;
 
-    await fetch('/api/profile', {
+    const userName = e.currentTarget.userName.value;
+
+    await fetch('/api/user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ bio, email }),
+      body: JSON.stringify({ bio, email, userName }),
     });
     refreshData();
   };
   const bioFrom = (
     <>
       <form onSubmit={handleSubmit}>
+        {/* add username */}
+        <input
+          type="text"
+          name="userName"
+          placeholder="Please enter your username"
+        />
         <input type="bio" name="bio" placeholder="Please enter your bio" />
         <input
           type="email"
@@ -88,7 +96,7 @@ const Home: FC<IHome> = (props) => {
       </Head>
 
       <main className={styles.main}>
-        {profile.map((bio) => {
+        {user.map((bio: any) => {
           return (
             <div key={bio.id}>
               <h1>{bio.bio}</h1>
@@ -129,7 +137,7 @@ const Home: FC<IHome> = (props) => {
 export default Home;
 
 export async function getServerSideProps() {
-  const profile = await prisma.profile.findMany();
+  const user = await prisma.user.findMany();
   const posts = await prisma.post.findMany({
     select: {
       id: true,
@@ -146,6 +154,6 @@ export async function getServerSideProps() {
   });
 
   return {
-    props: { profile, posts },
+    props: { user, posts },
   };
 }

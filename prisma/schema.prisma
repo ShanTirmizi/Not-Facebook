@@ -43,7 +43,11 @@ model User {
   accounts      Account[]
   sessions      Session[]
   Post          Post[]
-  Profile       Profile?
+  followedBy    Follows[] @relation("following")
+  following     Follows[] @relation("follower")
+  userName      String?    @default("Anonymous") @db.VarChar(255)
+  bio           String?    @db.Text
+  // Profile       Profile?
 }
 
 model VerificationToken {
@@ -67,21 +71,21 @@ model Post {
   @@index([authorId], map: "authorId")
 }
 
-model Profile {
-  id        Int        @id @default(autoincrement())
-  bio       String?    @db.Text
-  userName  String?    @default("Anonymous") @db.VarChar(255)
-  userId    String     @unique(map: "userId")
-  User      User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "profile_ibfk_1")
-  followedBy Follows[] @relation("following")
-  following  Follows[] @relation("follower")
-}
+// model Profile {
+//   id        Int        @id @default(autoincrement())
+//   bio       String?    @db.Text
+//   userName  String?    @default("Anonymous") @db.VarChar(255)
+//   userId    String     @unique(map: "userId")
+//   User      User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "profile_ibfk_1")
+//   followedBy Follows[] @relation("following")
+//   following  Follows[] @relation("follower")
+// }
 
 model Follows {
-  follower    Profile @relation("follower", fields: [followerId], references: [id])
-  followerId  Int
-  following   Profile @relation("following", fields: [followingId], references: [id])
-  followingId Int
+  follower    User @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User @relation("following", fields: [followingId], references: [id])
+  followingId String
 
   @@id([followerId, followingId])
 }
