@@ -14,7 +14,11 @@ export function uploadImage(imageUploaded: any) {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       imageUploaded,
-      { width: 400, height: 300, crop: 'fill' },
+      {
+        // width: 400,
+        // height: 300,
+        crop: 'fill',
+      },
       (err: any, res: NextApiResponse) => {
         if (err) reject(err);
         resolve(res);

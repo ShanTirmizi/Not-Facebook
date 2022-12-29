@@ -72,7 +72,7 @@ const Post: FC<IPostProps> = ({ posts }) => {
     e.preventDefault();
     const title = e.target.title.value;
     const content = e.target.content.value;
-    const email = session?.user?.email;
+    const user = session?.user!;
     const image = imageData?.secure_url;
     try {
       await fetch('/api/post', {
@@ -80,7 +80,7 @@ const Post: FC<IPostProps> = ({ posts }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, content, email, image }),
+        body: JSON.stringify({ title, content, user, image }),
       });
       refreshData();
     } catch (error) {
@@ -112,13 +112,13 @@ const Post: FC<IPostProps> = ({ posts }) => {
         <h1>List of all the posts</h1>
 
         {posts.map((post) => (
+          // console.log(post.User.userName),
           <div key={post.id}>
             <h1>{post.title}</h1>
             <p>{post.content}</p>
             <Image
               src={post.image}
               // fix the loader issue from console
-              loader={({ src }) => src}
               width={200}
               height={200}
               alt={post.title}

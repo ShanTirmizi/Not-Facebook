@@ -6,7 +6,7 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { title, content, email, image } = req.body;
+  const { title, content, user, image } = req.body;
   // const getImage = await cloudinary.uploader.upload(image, {
   //   foler: 'posts',
   //   width: 400,
@@ -20,7 +20,7 @@ export default async function handle(
       content,
       User: {
         connect: {
-          email: email,
+          email: user.email,
         },
       },
       // @ts-ignore
